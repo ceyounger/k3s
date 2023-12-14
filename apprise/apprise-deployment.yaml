@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apprise-api
+  namespace: general-services
+  labels:
+    app.kubernetes.io/name: apprise-api
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apprise-api
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: apprise-api
+    spec:
+      containers:
+        - name: apprise-api
+          image: lscr.io/linuxserver/apprise-api:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Los_Angeles
+            - name: PUID
+              value: '1000'
+            - name: PGID
+              value: '1000'
+            - name: UMASK
+              value: '002'
+          ports:
+            - name: apprise-api
+              containerPort: 8000
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "134217728"
+          volumeMounts:
+            -  name: apprise-longhorn-volume
+               mountPath: /config
+      volumes:
+        - name: apprise-longhorn-volume
+          persistentVolumeClaim:
+            claimName: apprise-longhorn-pvc
+      restartPolicy: Always
