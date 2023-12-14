@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: overseerr-ingress
+  namespace: media-services
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain-noauth@kubernetescrd
+  #   nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  #   certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: overseerr.taius.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: overseerr
+                port:
+                  number: 5055
+  # tls:
+  # - hosts:
+  #   - overseerr.taius.io
+  #   secretName: overseerr-tls
