@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prowlarr-ingress
+  namespace: media-services
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain-noauth@kubernetescrd
+  #   certmanager.k8s.io/cluster-issuer: letsencrypt-prod  
+
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: prowlarr.taius.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prowlarr
+                port:
+                  number: 9696
+  #tls:
+  #  - secretName: prowlarr-tls
+  #    hosts:
+  #      - prowlarr.taius.io
