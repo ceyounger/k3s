@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaresolverr
+  namespace: media-services
+  labels:
+    app.kubernetes.io/name: flaresolverr
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flaresolverr
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: flaresolverr
+    spec:
+      containers:
+        - name: flaresolverr
+          image: ghcr.io/flaresolverr/flaresolverr:latest
+          imagePullPolicy: Always          
+          env:
+            - name: LOG_LEVEL
+              value: info
+          ports:
+            - name: flaresolverr
+              containerPort: 8191
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "268435456"              
+      restartPolicy: Always
