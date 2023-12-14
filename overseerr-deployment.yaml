@@ -21,11 +21,15 @@ spec:
     spec:
       containers:
         - name: overseerr
-          image: sctx/overseerr:latest
+          image: lscr.io/linuxserver/overseerr:latest
           imagePullPolicy: Always
           env:
           - name: TZ
             value: America/Los_Angeles
+          - name: PUID
+            value: '1000'
+          - name: PGID
+            value: '1000'            
           ports:
             - name: overseerr
               containerPort: 5055
