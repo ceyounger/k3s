@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: overseerr
+  namespace: media-services
+  labels:
+    app.kubernetes.io/name: overseerr
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: overseerr
+  template:
+    metadata:
+      labels:
+        app: overseerr
+    spec:
+      containers:
+        - name: overseerr
+          image: sctx/overseerr:latest
+          imagePullPolicy: Always
+          env:
+          - name: TZ
+            value: America/Los_Angeles
+          ports:
+            - name: overseerr
+              containerPort: 5055
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "134217728"
+          volumeMounts:
+            -  name: overseerr-longhorn-volume
+               mountPath: /app/config
+      volumes:
+        - name: overseerr-longhorn-volume
+          persistentVolumeClaim:
+            claimName: overseerr-longhorn-pvc
+      restartPolicy: Always
