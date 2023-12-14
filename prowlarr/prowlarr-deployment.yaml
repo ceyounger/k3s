@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  namespace: media-services
+  labels:
+    app.kubernetes.io/name: prowlarr
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prowlarr
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: prowlarr
+    spec:
+      containers:
+        - name: prowlarr
+          image: lscr.io/linuxserver/prowlarr:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: America/Los_Angeles
+            - name: PUID
+              value: '1000'
+            - name: PGID
+              value: '1000'
+            - name: UMASK
+              value: '002'
+          ports:
+            - name: prowlarr
+              containerPort: 9696
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "268435456"
+          volumeMounts:
+            - mountPath: /config
+              name: prowlarr-longhorn-volume
+            - mountPath: /data/nzb
+              name: prowlarr-nfs-nzb
+            - mountPath: /data/torrent
+              name: prowlarr-nfs-torrent          
+      volumes:
+        - name: prowlarr-longhorn-volume
+          persistentVolumeClaim:
+            claimName: prowlarr-longhorn-pvc
+        - name: prowlarr-nfs-nzb
+          nfs:
+            server: 192.168.52.8
+            path: /volume1/media/Holding/docker/nzb
+            readOnly: false
+        - name: prowlarr-nfs-torrent
+          nfs:
+            server: 192.168.52.8
+            path: /volume1/media/Holding/docker/torrent
+            readOnly: false
+      restartPolicy: Always
