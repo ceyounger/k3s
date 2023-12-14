@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nzbhydra
+  namespace: media-services
+  labels:
+    app.kubernetes.io/name: nzbhydra
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nzbhydra
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: nzbhydra
+    spec:
+      containers:
+        - name: nzbhydra
+          image: lscr.io/linuxserver/nzbhydra2:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Los_Angeles
+            - name: PUID
+              value: '1000'
+            - name: PGID
+              value: '1000'              
+          ports:
+            - name: nzbhydra
+              containerPort: 5076
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "268435456"
+          volumeMounts:
+            - mountPath: /config
+              name: nzbhydra-longhorn-volume
+            - mountPath: /data/nzb
+              name: nzbhydra-nfs-nzb
+            - mountPath: /data/torrent
+              name: nzbhydra-nfs-torrent
+      volumes:
+        - name: nzbhydra-longhorn-volume
+          persistentVolumeClaim:
+            claimName: nzbhydra-longhorn-pvc
+        - name: nzbhydra-nfs-nzb
+          nfs:
+            server: 192.168.52.8
+            path: /volume1/media/Holding/docker/nzb
+            readOnly: false
+        - name: nzbhydra-nfs-torrent
+          nfs:
+            server: 192.168.52.8
+            path: /volume1/media/Holding/docker/torrent
+            readOnly: false
+      restartPolicy: Always
