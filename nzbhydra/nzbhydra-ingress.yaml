@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nzbhydra-ingress
+  namespace: media-services
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain-noauth@kubernetescrd
+  #   certmanager.k8s.io/cluster-issuer: letsencrypt-prod  
+
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: nzbhydra.taius.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nzbhydra
+                port:
+                  number: 5076
+  # tls:
+  #  - secretName: nzbhydra-tls
+  #    hosts:
+  #      - nzbhydra.taius.io
