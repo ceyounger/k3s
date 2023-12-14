@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jackett
+  namespace: media-services
+  labels:
+    app.kubernetes.io/name: jackett
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jackett
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: jackett
+    spec:
+      containers:
+        - name: jackett
+          image: lscr.io/linuxserver/jackett:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Los_Angeles
+            - name: PUID
+              value: '1000'
+            - name: PGID
+              value: '1000'              
+          ports:
+            - name: jackett
+              containerPort: 9117
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "268435456"
+          volumeMounts:
+            - mountPath: /config
+              name: jackett-longhorn-volume
+            - mountPath: /data/nzb
+              name: jackett-nfs-nzb
+            - mountPath: /data/torrent
+              name: jackett-nfs-torrent
+      volumes:
+        - name: jackett-longhorn-volume
+          persistentVolumeClaim:
+            claimName: jackett-longhorn-pvc
+        - name: jackett-nfs-nzb
+          nfs:
+            server: 192.168.52.8
+            path: /volume1/media/Holding/docker/nzb
+            readOnly: false
+        - name: jackett-nfs-torrent
+          nfs:
+            server: 192.168.52.8
+            path: /volume1/media/Holding/docker/torrent
+            readOnly: false
+      restartPolicy: Always
