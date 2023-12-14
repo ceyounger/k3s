@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jackett-ingress
+  namespace: media-services
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain-noauth@kubernetescrd
+  #   nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  #   certmanager.k8s.io/cluster-issuer: letsencrypt-prod  
+
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: jackett.taius.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jackett
+                port:
+                  number: 9117
+  #tls:
+  #  - secretName: jackett-tls
+  #    hosts:
+  #      - jackett.taius.io
