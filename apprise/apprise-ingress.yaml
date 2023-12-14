@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apprise-ingress
+  namespace: general-services
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain-noauth@kubernetescrd
+
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: apprise.taius.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: apprise-api
+                port:
+                  number: 8000
