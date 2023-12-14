@@ -1,2 +1,2 @@
-# k3s-overseerr
-Overseerr on K3S
+# k3s
+k3s Projects
