@@ -44,7 +44,7 @@ spec:
               memory: "134217728"
           volumeMounts:
             -  name: overseerr-longhorn-volume
-               mountPath: /app/config
+               mountPath: /config
       volumes:
         - name: overseerr-longhorn-volume
           persistentVolumeClaim:
