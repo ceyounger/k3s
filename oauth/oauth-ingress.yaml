@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oauth-ingress
+  namespace: general-services
+  annotations:
+    traefik.ingress.kubernetes.io/router.entryPoints: websecure
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain-noauth@kubernetescrd
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  # certmanager.k8s.io/cluster-issuer: letsencrypt-dns-prod  
+
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: oauth.taius.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: oauth
+                port:
+                  number: 4181
+  #tls:
+  #  - secretName: oauth-tls
+  #    hosts:
+  #      - oauth.taius.io
