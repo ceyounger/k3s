@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth
+  namespace: general-services
+  labels:
+    app: oauth
+spec:
+  selector:
+    app: oauth
+  ports:
+    - name: oauth
+      port: 4181
+      targetPort: 4181
