@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth
+  namespace: general-services
+  labels:
+    app: oauth
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: oauth
+    spec:
+      terminationGracePeriodSeconds: 60    
+      containers:
+        - image: thomseddon/traefik-forward-auth:2
+          imagePullPolicy: IfNotPresent
+          name: oauth
+          ports:
+            - containerPort: 4181
+              hostPort: 4181
+              protocol: TCP      
+          env:
+            - name: CONFIG
+              value: $CONFIG
+            - name: DOMAIN
+              value: $DOMAIN
+            - name: OIDC_ISSUER
+              value: $OIDC_ISSUER
+            - name: AUTH_HOST
+              value: $AUTH_HOST
+            - name: PROVIDERS_GOOGLE_CLIENT_ID
+              value: $PROVIDERS_GOOGLE_CLIENT_ID
+            - name: SECRET
+              value: $SECRET
+            - name: PROVIDERS_GOOGLE_CLIENT_SECRET
+              value: $PROVIDERS_GOOGLE_CLIENT_SECRET
+            - name: COOKIE_DOMAIN
+              value: $COOKIE_DOMAIN
+            - name: URL_PATH
+              value: $URL_PATH
+            - name: WHITELIST
+              value: $WHITELIST
+            - name: DEFAULT_ACTION
+              value: $DEFAULT_ACTION
+            - name: DEFAULT_PROVIDER
+              value: $DEFAULT_PROVIDER
+            - name: INSECURE_COOKIE
+              value: $INSECURE_COOKIE
+            - name: LIFETIME
+              value: $LIFETIME
+            - name: LOG_FORMAT
+              value: $LOG_FORMAT
+            - name: LOG_LEVEL
+              value: $LOG_LEVEL
+            - name: TZ
+              value: $TZ
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "134217728"
+          volumeMounts:
+            -  name: oauth-longhorn-volume
+               mountPath: /config
+      volumes:
+        - name: oauth-longhorn-volume
+          persistentVolumeClaim:
+            claimName: oauth-longhorn-pvc
+      hostname: oauth
