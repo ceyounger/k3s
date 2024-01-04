@@ -24,7 +24,7 @@ spec:
       containers:
         - name: apprise-api
           image: lscr.io/linuxserver/apprise-api:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: TZ
               value: America/Los_Angeles
