@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:latest
+          image: linuxserver/prowlarr:1.11.4
           imagePullPolicy: Always
           env:
             - name: TZ
