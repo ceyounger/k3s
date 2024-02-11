@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-kuma
+  namespace: general-services
+  labels:
+    app.kubernetes.io/name: uptime-kuma
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll
+    keel.sh/pollSchedule: "@weekly"    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: uptime-kuma
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: uptime-kuma
+    spec:
+      containers:
+        - name: uptime-kuma
+          image: louislam/uptime-kuma:latest
+          imagePullPolicy: Always
+          env:
+            - name: TZ
+              value: America/Los_Angeles
+            - name: PUID
+              value: '1000'
+            - name: PGID
+              value: '1000'
+            - name: UMASK
+              value: '002'
+          ports:
+            - name: uptime-kuma
+              containerPort: 3001
+          resources:
+            limits:
+              cpu: 500m
+              memory: "536870912"
+            requests:
+              cpu: 250m
+              memory: "134217728"
+          volumeMounts:
+            -  name: uptime-kuma-longhorn-volume
+               mountPath: /config
+      volumes:
+        - name: uptime-kuma-longhorn-volume
+          persistentVolumeClaim:
+            claimName: uptime-kuma-longhorn-pvc
+      restartPolicy: Always
+
