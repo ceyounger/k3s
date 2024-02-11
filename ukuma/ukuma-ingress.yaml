@@ -4,7 +4,7 @@ metadata:
   name: uptime-kuma-ingress
   namespace: monitoring
   annotations:
-    traefik.ingress.kubernetes.io/router.middlewares: default-chain-auth@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: default-chain-basic-auth@kubernetescrd
 
 spec:
   ingressClassName: traefik
