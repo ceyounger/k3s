@@ -46,7 +46,7 @@ spec:
               memory: "134217728"
           volumeMounts:
             -  name: uptime-kuma-longhorn-volume
-               mountPath: /config
+               mountPath: /app/data
       volumes:
         - name: uptime-kuma-longhorn-volume
           persistentVolumeClaim:
