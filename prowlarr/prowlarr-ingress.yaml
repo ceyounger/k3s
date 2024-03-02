@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: prowlarr.taius.io
+    - host: prowlarr-old.taius.io
       http:
         paths:
           - path: /
