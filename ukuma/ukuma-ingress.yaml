@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: ukuma.taius.io
+    - host: ukuma-old.taius.io
       http:
         paths:
           - path: /
