@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: oauth.taius.io
+    - host: oauth-old.taius.io
       http:
         paths:
           - path: /
