@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: apprise.taius.io
+    - host: apprise-old.taius.io
       http:
         paths:
           - path: /
