@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nzbhydra-longhorn-pvc
+  name: nzbhydra-pvc
   namespace: media-services
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: longhorn
+  storageClassName: do-block-storage
   resources:
     requests:
       storage: 4Gi
